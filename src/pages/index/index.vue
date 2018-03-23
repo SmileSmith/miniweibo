@@ -1,5 +1,5 @@
 <template>
-  <div class="container" @click="clickHandle('test click', $event)">
+  <div class="container">
 
     <div class="userinfo" @click="bindViewTap">
       <img class="userinfo-avatar" v-if="userInfo.avatarUrl" :src="userInfo.avatarUrl" background-size="cover" />
@@ -10,15 +10,14 @@
 
     <div class="usermotto">
       <div class="user-motto">
-        <card :text="motto"></card>
+        <card v-if="userInfo.nickName" text="微信用户登录成功"></card>
+      </div>
+      <div class="user-motto">
+        <card v-if="weiboInfo" text="微博账号认证成功"></card>
       </div>
     </div>
 
-    <form class="form-container">
-      <input type="text" class="form-control" v-model="motto" placeholder="v-model" />
-      <input type="text" class="form-control" v-model.lazy="motto" placeholder="v-model.lazy" />
-    </form>
-    <a href="/pages/counter/main" class="counter">去往Vuex示例页面</a>
+    <a href="/pages/counter/main" class="weibo">即将打开世界的大门...</a>
   </div>
 </template>
 
@@ -28,8 +27,8 @@ import card from '@/components/card';
 export default {
   data() {
     return {
-      motto: 'Hello World',
       userInfo: {},
+      weiboInfo: {},
     };
   },
 
@@ -54,8 +53,8 @@ export default {
         },
       });
     },
-    clickHandle(msg, ev) {
-      console.log('clickHandle:', msg, ev);
+    getWeiboInfo() {
+
     },
   },
 
@@ -85,7 +84,9 @@ export default {
 }
 
 .usermotto {
-  margin-top: 150px;
+  margin-top: 120px;
+  font-size: 15px;
+  color: #ccc;
 }
 
 .form-control {
@@ -93,13 +94,14 @@ export default {
   padding: 0 12px;
   margin-bottom: 5px;
   border: 1px solid #ccc;
+  font-size: 20px;
 }
 
-.counter {
+.weibo {
   display: inline-block;
   margin: 10px auto;
   padding: 5px 10px;
-  color: blue;
-  border: 1px solid blue;
+  color: #E6162D;
+  font-size: 25px;
 }
 </style>
