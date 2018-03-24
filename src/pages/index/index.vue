@@ -53,14 +53,41 @@ export default {
         },
       });
     },
-    getWeiboInfo() {
-
+    checkAccessToken() {
+      wx.login({
+        success: (res) => {
+          if (res.code) {
+            console.log(res.code);
+            // 发起网络请求
+            wx.request({
+              url: 'http://localhost:3000/users/checktoken',
+              data: {
+                code: res.code,
+              },
+              success: ({ data }) => {
+                if (data.token) {
+                  console.log(data);
+                  return;
+                }
+                if (data.openid) {
+                  const url = `../../pages/login/main?openid=${data.openid}`;
+                  wx.navigateTo({ url });
+                }
+              },
+            });
+          } else {
+            console.log(`登录失败！${res.errMsg}`);
+          }
+        },
+      });
     },
+    getWeiboInfo() {},
   },
 
   created() {
     // 调用应用实例的方法获取全局数据
     this.getUserInfo();
+    this.checkAccessToken();
   },
 };
 </script>
@@ -101,7 +128,7 @@ export default {
   display: inline-block;
   margin: 10px auto;
   padding: 5px 10px;
-  color: #E6162D;
+  color: #e6162d;
   font-size: 25px;
 }
 </style>
