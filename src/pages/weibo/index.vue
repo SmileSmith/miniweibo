@@ -2,7 +2,7 @@
   <div>
     <ul class="container weibo-list">
       <li v-for="(weibo, index) in weiboList" :class="{ red: aa }" :key="index" class="weibo-item">
-        <weiboCard :weibo="weibo"></weiboCard>
+        <weiboCard :weibo="weibo" :now="now"></weiboCard>
       </li>
     </ul>
   </div>
@@ -23,6 +23,7 @@ export default {
     return {
       weiboList: [],
       cached: false,
+      now: new Date().getTime(),
     };
   },
   mounted() {
@@ -50,8 +51,8 @@ export default {
     try {
       const data = wx.getStorageSync('weibo_cache');
       const now = new Date().getTime();
-      const oneHour = 60 * 60 * 1000;
-      if (data && data.lastUpdateTime - now <= oneHour) {
+      const oneHour = 5 * 60 * 1000;
+      if (data && now - data.lastUpdateTime <= oneHour) {
         this.weiboList = data.statuses;
         this.cached = true;
       }
@@ -66,10 +67,13 @@ export default {
 .weibo-list {
   display: flex;
   flex-direction: column;
-  padding: 20rpx 10rpx;
+  padding: 20rpx 0;
+  background-color: #eee;
 }
 
 .weibo-item {
-  margin: 10rpx;
+  width: 100%;
+  margin: 10rpx 0;
+  background-color: #fff;
 }
 </style>
