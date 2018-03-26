@@ -40,12 +40,9 @@ export default {
           password: this.password,
         },
         success: ({ data }) => {
-          if (data.token) {
+          if (data.access_token) {
             console.log(data);
-            return;
-          }
-          if (data.openid) {
-            const url = './../../pages/weibo/main';
+            const url = `./../../pages/weibo/main?access_token=${data.access_token}`;
             wx.navigateTo({ url });
           }
         },
@@ -75,10 +72,9 @@ export default {
 }
 .weibo-input {
   margin-top: 50px;
+  padding: 0 20px;
 }
 .weibo-input input {
-  width: 80%;
-  height: 30px;
   border: 1px #ccc solid;
   border-radius: 5px;
   margin: 25px auto;

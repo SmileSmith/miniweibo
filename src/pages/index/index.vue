@@ -17,7 +17,7 @@
       </div>
     </div>
 
-    <a href="/pages/counter/main" class="weibo">即将打开世界的大门...</a>
+    <a href="/pages/weibo/main" class="weibo">即将打开世界的大门...</a>
   </div>
 </template>
 
@@ -65,8 +65,9 @@ export default {
                 code: res.code,
               },
               success: ({ data }) => {
-                if (data.token) {
-                  console.log(data);
+                if (data.access_token) {
+                  const url = `./../../pages/weibo/main?access_token=${data.access_token}`;
+                  wx.navigateTo({ url });
                   return;
                 }
                 if (data.openid) {
