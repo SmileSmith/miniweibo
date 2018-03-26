@@ -6,6 +6,6 @@ app.$mount();
 
 export default {
   config: {
-    navigationBarTitleText: '微博',
+    navigationBarTitleText: '我的微博',
   },
 };

@@ -13,8 +13,7 @@
 </template>
 
 <script>
-// Use Vuex
-import card from '@/components/card';
+import api from '@/utils/api';
 
 export default {
   data() {
@@ -32,7 +31,7 @@ export default {
   methods: {
     loginInWeibo() {
       wx.request({
-        url: 'http://localhost:3000/users/loginweibo',
+        url: api.loginweibo,
         method: 'POST',
         data: {
           openid: this.openid,
@@ -48,9 +47,6 @@ export default {
       });
     },
     goBack() {},
-  },
-  components: {
-    card,
   },
 };
 </script>

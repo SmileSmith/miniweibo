@@ -70,7 +70,7 @@ export default {
     },
     getContent() {
       if (/http[s]?:\/\//.test(this.weibo.text)) {
-        return this.weibo.text.replace(/https?:\/\/[\w\d./]+/, '~');
+        return this.weibo.text.replace(/https?:\/\/[\w\d./]+/g, '[网页链接]');
       }
       return this.weibo.text;
     },

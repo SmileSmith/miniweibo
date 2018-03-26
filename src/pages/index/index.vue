@@ -23,6 +23,7 @@
 
 <script>
 import card from '@/components/card';
+import api from '@/utils/api';
 
 export default {
   data() {
@@ -59,18 +60,18 @@ export default {
           if (res.code) {
             // 发起网络请求
             wx.request({
-              url: 'http://localhost:3000/users/checktoken',
+              url: api.checktoken,
               data: {
                 code: res.code,
               },
               success: ({ data }) => {
                 if (data.access_token) {
-                  const url = `../weibo/main?access_token=${data.access_token}`;
+                  const url = `../../pages/weibo/main?access_token=${data.access_token}`;
                   wx.redirectTo({ url });
                   return;
                 }
                 if (data.openid) {
-                  const url = `../login/main?openid=${data.openid}`;
+                  const url = `../../pages/login/main?openid=${data.openid}`;
                   wx.redirectTo({ url });
                 }
               },
