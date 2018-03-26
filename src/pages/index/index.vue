@@ -57,7 +57,6 @@ export default {
       wx.login({
         success: (res) => {
           if (res.code) {
-            console.log(res.code);
             // 发起网络请求
             wx.request({
               url: 'http://localhost:3000/users/checktoken',
@@ -66,18 +65,18 @@ export default {
               },
               success: ({ data }) => {
                 if (data.access_token) {
-                  const url = `./../../pages/weibo/main?access_token=${data.access_token}`;
-                  wx.navigateTo({ url });
+                  const url = `../weibo/main?access_token=${data.access_token}`;
+                  wx.redirectTo({ url });
                   return;
                 }
                 if (data.openid) {
-                  const url = `../../pages/login/main?openid=${data.openid}`;
-                  wx.navigateTo({ url });
+                  const url = `../login/main?openid=${data.openid}`;
+                  wx.redirectTo({ url });
                 }
               },
             });
           } else {
-            console.log(`登录失败！${res.errMsg}`);
+            console.log(`Weixin login error: ${res.errMsg}`);
           }
         },
       });

@@ -41,9 +41,8 @@ export default {
         },
         success: ({ data }) => {
           if (data.access_token) {
-            console.log(data);
             const url = `./../../pages/weibo/main?access_token=${data.access_token}`;
-            wx.navigateTo({ url });
+            wx.redirectTo({ url });
           }
         },
       });
