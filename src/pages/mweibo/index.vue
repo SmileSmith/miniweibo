@@ -2,7 +2,7 @@
   <div>
     <ul class="weibo-list">
       <li v-for="(weibo, index) in weiboList" :key="index" class="weibo-item">
-        <mWeiboCard :weibo="weibo.mblog"></mWeiboCard>
+        <mWeiboCard :weibo="weibo"></mWeiboCard>
       </li>
     </ul>
     <div class="refresh"  @click="topRefresh">
@@ -57,16 +57,15 @@ export default {
         success: ({ data, header }) => {
           wx.vibrateShort();
           if (!data.ok) return;
-          if (success) {
-            success();
-          }
+          if (success) success();
+          const weiboList = this.filterData(data.data.cards);
           if (top) {
-            this.weiboList = data.data.cards;
+            this.weiboList = weiboList;
           } else {
-            this.weiboList = this.weiboList.concat(data.data.cards);
+            this.weiboList = this.weiboList.concat(weiboList);
           }
           this.sinceId += 1;
-          this.setCache(data);
+          this.setCache(weiboList);
           this.setCookie(header);
         },
         fail: (err) => {
@@ -82,11 +81,32 @@ export default {
         },
       });
     },
-    setCache(data) {
+    filterData(cardList) {
+      return cardList.map((card) => {
+        const weibo = card.mblog;
+        const createdAt = weibo.created_at || '宇宙大爆炸前';
+        const source = weibo.source || '火星';
+        return {
+          user: {
+            profile_image_url: weibo.user.profile_image_url,
+            screen_name: weibo.user.screen_name,
+          },
+          created_at: createdAt,
+          source,
+          pics: {
+            smalls: weibo.pics ? weibo.pics.map(pic => pic.url) : [],
+            larges: weibo.pics ? weibo.pics.map(pic => pic.large.url) : [],
+          },
+          page_info: weibo.page_info,
+          text: weibo.text,
+        };
+      });
+    },
+    setCache(weiboList) {
       const lastUpdateTime = new Date().getTime();
       wx.setStorage({
         key: 'hot_cache',
-        data: { lastUpdateTime, ...data },
+        data: { lastUpdateTime, weiboList },
       });
     },
     setCookie(header) {
@@ -108,7 +128,7 @@ export default {
       const now = new Date().getTime();
       const oneHour = 5 * 60 * 1000;
       if (data && now - data.lastUpdateTime <= oneHour) {
-        this.weiboList = data.data.cards;
+        this.weiboList = data.weiboList;
         this.cached = true;
       }
     } catch (e) {

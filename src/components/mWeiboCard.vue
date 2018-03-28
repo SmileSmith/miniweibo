@@ -20,7 +20,7 @@
         v-for="(url, index) in pics.smalls"
         :key="index" :src="url" :lazy-load="true" mode="aspectFill"
         @click="previewImage(index)" />
-      <video v-show="video" :src="video" controls></video>
+      <video v-if="video" :src="video.url" :poster="video.pic" controls></video>
     </div>
   </div>
 </template>
@@ -35,10 +35,10 @@ export default {
   props: ['weibo', 'now'],
   computed: {
     created_at() {
-      return this.weibo.created_at || '宇宙大爆炸前';
+      return this.weibo.created_at;
     },
     source() {
-      return this.weibo.source || '火星';
+      return this.weibo.source;
     },
     content() {
       if (this.weibo.text) {
@@ -53,8 +53,7 @@ export default {
       if (this.weibo.page_info) {
         const page = this.weibo.page_info;
         if (page.type === 'video') {
-          const { video, text } = this.readVideo(page);
-          this.video = video;
+          const { text } = this.readVideo(page);
           return text;
         }
         if (page.type === 'topic') {
@@ -70,30 +69,21 @@ export default {
       if (this.weibo.page_info) {
         const page = this.weibo.page_info;
         if (page.type === 'video') {
-          const { video } = this.readVideo(page);
-          return video;
+          return this.readVideo(page);
         }
       }
-      return '';
+      return null;
     },
     pics() {
-      if (this.weibo.pics) {
-        return {
-          smalls: this.weibo.pics.map(pic => pic.url),
-          larges: this.weibo.pics.map(pic => pic.large.url),
-        };
-      }
-      return {
-        smalls: [],
-        larges: [],
-      };
+      return this.weibo.pics;
     },
   },
   methods: {
     readVideo(page) {
       return {
         text: `${page.page_title} ${page.content2}`,
-        video: page.media_info.stream_url,
+        url: page.media_info.stream_url,
+        pic: page.page_pic.url,
       };
     },
     readTopic(page) {
@@ -154,5 +144,9 @@ export default {
   margin: 2px;
   width: 110px;
   height: 110px;
+}
+.video {
+  height: 170px;
+  width: 300px;
 }
 </style>
