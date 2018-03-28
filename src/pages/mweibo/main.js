@@ -7,5 +7,6 @@ app.$mount();
 export default {
   config: {
     navigationBarTitleText: '热门微博',
+    enablePullDownRefresh: true,
   },
 };
