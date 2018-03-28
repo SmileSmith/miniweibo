@@ -45,7 +45,10 @@ export default {
         return this.weibo.text
           .replace(/https?:\/\/[\w\d./]+/g, '[网页链接]')
           .replace(/<br\/>/g, '\n')
-          .replace(/$quot/g, '"');
+          .replace(/&quot;/g, '"')
+          .replace(/&gt;/g, '>')
+          .replace(/&lt;/g, '<')
+          .replace(/&amp;/g, '&');
       }
       if (this.weibo.page_info) {
         const page = this.weibo.page_info;
