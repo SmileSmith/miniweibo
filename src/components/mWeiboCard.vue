@@ -6,18 +6,21 @@
       </div>
       <div class="title">
         <p class="uesr">{{weibo.user.screen_name}}</p>
-        <text class="desc">{{created_at}} </text>
-        <text class="desc">来自 {{source}}</text>
+        <p class="desc">
+          <text>{{created_at}} </text>
+          <text>来自 {{source}}</text>
+        </p>
       </div>
     </div>
     <div class="content">
       <richContent :content="content"></richContent>
     </div>
     <div class="preview">
-      <image v-if="weibo.pics.length > 0" class="pic"
-        v-for="(pic_url, index) in weibo.pics"
-        :key="index" :src="pic_url.url" lazy-load="true" mode="aspectFill"/>
-      <video v-show="video" :id="video + index" :src="video" controls></video>
+      <image v-if="pics.smalls.length > 0" class="pic"
+        v-for="(url, index) in pics.smalls"
+        :key="index" :src="url" :lazy-load="true" mode="aspectFill"
+        @click="previewImage(index)" />
+      <video v-show="video" :src="video" controls></video>
     </div>
   </div>
 </template>
@@ -30,56 +33,20 @@ export default {
     richContent,
   },
   props: ['weibo', 'now'],
-  data() {
-    return {
-      created_at: this.getBeforeTime(),
-      source: this.getSourceText(),
-      content: this.getContent(),
-      video: this.getVideo(),
-    };
-  },
-  methods: {
-    getBeforeTime() {
-      return this.weibo.created_at;
+  computed: {
+    created_at() {
+      return this.weibo.created_at || '宇宙大爆炸前';
     },
-    getSourceText() {
-      return this.weibo.source;
+    source() {
+      return this.weibo.source || '火星';
     },
-    getVideo() {
-      if (this.weibo.page_info) {
-        const page = this.weibo.page_info;
-        if (page.type === 'video') {
-          const { video } = this.readVideo(page);
-          return video;
-        }
+    content() {
+      if (this.weibo.text) {
+        return this.weibo.text
+          .replace(/https?:\/\/[\w\d./]+/g, '[网页链接]')
+          .replace(/<br\/>/g, '\n')
+          .replace(/$quot/g, '"');
       }
-      return '';
-    },
-    readVideo(page) {
-      // 目前似乎只有秒拍的视频可以预览，需要再分析
-      /*       const allLinks = this.weibo.text.match(/https?:\/\/[\w\d./]+/g);
-      let shortUrl = '';
-      allLinks.forEach((link) => {
-        if (/https?:\/\/t\.cn[\w\d./]+/.test(link)) {
-          shortUrl += `${link}&`;
-        }
-      }); */
-      return {
-        text: `${page.page_title} ${page.content2}`,
-        video: page.media_info.stream_url,
-      };
-    },
-    readTopic(page) {
-      return {
-        text: `${page.page_title} ${page.content1}`,
-      };
-    },
-    readWebPage(page) {
-      return {
-        text: page.content2,
-      };
-    },
-    getContent() {
       if (this.weibo.page_info) {
         const page = this.weibo.page_info;
         if (page.type === 'video') {
@@ -94,7 +61,53 @@ export default {
           return this.readWebPage(page).text;
         }
       }
-      return this.weibo.text.replace(/https?:\/\/[\w\d./]+/g, '[网页链接]').replace(/<br\/>/g, '\n');
+      return '这里一片荒芜...';
+    },
+    video() {
+      if (this.weibo.page_info) {
+        const page = this.weibo.page_info;
+        if (page.type === 'video') {
+          const { video } = this.readVideo(page);
+          return video;
+        }
+      }
+      return '';
+    },
+    pics() {
+      if (this.weibo.pics) {
+        return {
+          smalls: this.weibo.pics.map(pic => pic.url),
+          larges: this.weibo.pics.map(pic => pic.large.url),
+        };
+      }
+      return {
+        smalls: [],
+        larges: [],
+      };
+    },
+  },
+  methods: {
+    readVideo(page) {
+      return {
+        text: `${page.page_title} ${page.content2}`,
+        video: page.media_info.stream_url,
+      };
+    },
+    readTopic(page) {
+      return {
+        text: `${page.page_title} ${page.content1}`,
+      };
+    },
+    readWebPage(page) {
+      return {
+        text: `${page.page_title} ${page.content2}`,
+      };
+    },
+    previewImage(index) {
+      wx.previewImage({
+        current: this.pics.larges[index], // 当前显示图片的http链接
+        urls: this.pics.larges, // 需要预览的图片http链接列表
+      });
     },
   },
 };
@@ -116,7 +129,9 @@ export default {
 }
 .title {
   margin-left: 10px;
-  display: inline-block;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
   font-size: 15px;
 }
 .title .desc {

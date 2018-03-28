@@ -1,43 +1,53 @@
 <template>
   <div>
+
     <ul class="container weibo-list">
       <li v-for="(weibo, index) in weiboList" :key="index" class="weibo-item">
         <mWeiboCard :weibo="weibo.mblog"></mWeiboCard>
       </li>
     </ul>
-    <icon class="refresh" type="download" size="50" color="#E6162D" @click="refreshLine"></icon>
+    <div class="refresh"  @click="refreshLine">
+      <loadingButton :loading="loading"></loadingButton>
+    </div>
   </div>
 </template>
 
 <script>
 import mWeiboCard from '@/components/mWeiboCard';
+import loadingButton from '@/components/loadingButton';
 
 export default {
   components: {
     mWeiboCard,
+    loadingButton,
   },
-
   data() {
     return {
       weiboList: [],
       cached: false,
       sinceId: 0,
+      loading: false,
     };
   },
   methods: {
     refreshLine() {
-      const cookie = wx.getStorageSync('cookie');
+      wx.pageScrollTo({
+        scrollTop: 0,
+        duration: 300,
+      });
+      this.loading = true;
       wx.request({
         url: 'https://m.weibo.cn/api/container/getIndex?containerid=102803',
         method: 'GET',
         header: {
-          cookie,
+          cookie: wx.getStorageSync('cookie'),
         },
         data: {
           since_id: this.sinceId,
         },
         success: ({ data, header }) => {
           wx.vibrateShort();
+          this.loading = false;
           if (data.ok) {
             this.weiboList = [];
             this.weiboList = data.data.cards;
@@ -56,6 +66,7 @@ export default {
           }
         },
         fail: (err) => {
+          this.loading = false;
           console.log(err);
         },
       });
@@ -99,6 +110,7 @@ export default {
   right: 10px;
   bottom: 10px;
   border-radius: 25px;
-  background-color: #fff;
+  background: #fff;
+  box-shadow: 0px 0px 1px .01px #999;
 }
 </style>

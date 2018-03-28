@@ -2,8 +2,8 @@
   <view  class="rich-content">
     <view v-for="(content, index) in contentList" :key="index">
       <text v-if="content.type==='text'">{{content.text}}</text>
-      <image v-if="content.type==='emotion'" class="emotion" :src="content.src" lazy-load="true" mode="widthFix"/>
-      <a v-if="content.type==='link'">{{content.text}}</a>
+      <image v-if="content.type==='emotion'" class="rich-emotion" :src="'https:' + content.src" :lazy-load="true" mode="widthFix"/>
+      <a v-if="content.type==='link'" class="rich-link">{{content.text}}</a>
     </view>
   </view>
 </template>
@@ -11,13 +11,8 @@
 <script>
 export default {
   props: ['content'],
-  data() {
-    return {
-      contentList: this.getContentList(),
-    };
-  },
-  methods: {
-    getContentList() {
+  computed: {
+    contentList() {
       const contentList = [];
       let fullContent = this.content;
       const links = this.content.match(/<(a).*?<\/\1>/g);
@@ -61,8 +56,11 @@ export default {
   display: flex;
   flex-wrap: wrap;
 }
-.emotion {
+.rich-emotion {
   width: 20px;
   height: 20px;
+}
+.rich-link {
+  margin: 0 5px;
 }
 </style>
