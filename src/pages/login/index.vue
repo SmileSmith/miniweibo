@@ -50,7 +50,7 @@ export default {
   },
 };
 </script>
-<style>
+<style scoped>
 .weibo-warp {
   text-align: center;
   margin-top: 50px;

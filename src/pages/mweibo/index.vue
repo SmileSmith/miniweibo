@@ -32,7 +32,6 @@ export default {
   data() {
     return {
       weiboList: [],
-      markedWeibo: {},
       cached: false,
       sinceId: 1,
       loading: false,
@@ -86,7 +85,6 @@ export default {
           const weiboList = this.filterData(data.data.cards);
           if (top) {
             this.weiboList = weiboList;
-            this.markedWeibo = {};
           } else {
             this.weiboList = this.weiboList.concat(weiboList);
           }
@@ -157,7 +155,6 @@ export default {
   background-color: #eee;
 }
 .weibo-item {
-  width: 100%;
   margin: 10rpx 0;
   background-color: #fff;
 }

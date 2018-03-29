@@ -12,9 +12,8 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .bar {
-  width: 100%;
   height: 30px;
   display: flex;
   justify-content: space-around;
@@ -23,6 +22,7 @@ export default {
   padding: 0 10px;
   font-size: 12px;
   color: #999;
+  background-color: #fff;
 }
 .item {
   flex: 1;

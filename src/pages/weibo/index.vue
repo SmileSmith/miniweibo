@@ -63,7 +63,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .weibo-list {
   display: flex;
   flex-direction: column;
