@@ -1,17 +1,6 @@
 <template>
   <div class="card">
-    <div class="label">
-      <div class="avater">
-        <image :src="weibo.user.profile_image_url" />
-      </div>
-      <div class="title">
-        <p class="uesr">{{weibo.user.screen_name}}</p>
-        <p class="desc">
-          <text>{{weibo.created_at}} </text>
-          <text>来自 {{weibo.source}}</text>
-        </p>
-      </div>
-    </div>
+    <weiboUser :user="weibo.user" :created="weibo.created_at" :source="weibo.source"></weiboUser>
     <div class="content">
       <richContent :content="weibo.text"></richContent>
     </div>
@@ -27,10 +16,12 @@
 
 <script>
 import richContent from './richContent';
+import weiboUser from './weiboUser';
 
 export default {
   components: {
     richContent,
+    weiboUser,
   },
   props: ['weibo'],
   methods: {
@@ -53,25 +44,7 @@ export default {
   padding: 10px;
   border-top: 0.5px #ccc solid;
   border-bottom: 0.5px #eee solid;
-}
-.label {
-  display: flex;
-}
-.avater image {
-  width: 40px;
-  height: 40px;
-  border-radius: 20px;
-}
-.title {
-  margin-left: 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  font-size: 15px;
-}
-.title .desc {
-  font-size: 12px;
-  color: #999;
+  background-color: #fff;
 }
 .content {
   margin: 5px 0;

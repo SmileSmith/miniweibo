@@ -1,74 +1,89 @@
 <template>
   <div class="detial">
     <mWeiboCard :weibo="weibo"></mWeiboCard>
+    <weiboBar :bar="weibo.bar"></weiboBar>
+    <ul class="comment-list">
+        <weiboComment v-if="commentList.length > 0" class="comment-item" v-for="(comment, index) in commentList" :key="index" :comment="comment"></weiboComment>
+    </ul>
+    <loadingBar v-show="loading"></loadingBar>
   </div>
 </template>
 
 <script>
 import mWeiboCard from '@/components/mWeiboCard';
+import weiboComment from '@/components/weiboComment';
+import weiboBar from '@/components/weiboBar';
+import loadingBar from '@/components/loadingBar';
 import store from '@/store';
+import { getCommentInfo } from '@/utils/mweibo';
 
 export default {
   components: {
     mWeiboCard,
+    weiboBar,
+    weiboComment,
+    loadingBar,
+  },
+  data() {
+    return {
+      commentList: [],
+      page: 1,
+      loading: false,
+    };
   },
   computed: {
     weibo() {
-      return JSON.parse(JSON.stringify(store.getters.currentMWeibo));
+      return store.getters.currentMWeibo;
     },
   },
   methods: {
-    previewImage(index) {
-      wx.previewImage({
-        current: this.weibo.pics.larges[index], // 当前显示图片的http链接
-        urls: this.weibo.pics.larges, // 需要预览的图片http链接列表
+    refreshComment() {
+      this.loading = true;
+      wx.request({
+        url: 'https://m.weibo.cn/api/comments/show',
+        method: 'GET',
+        data: {
+          id: this.weibo.id,
+          page: this.page,
+        },
+        success: ({ data }) => {
+          if (!data.ok) return;
+          if (data.data.hot_data) {
+            this.commentList = this.filterData(data.data.hot_data);
+          } else {
+            this.commentList = this.commentList.concat(this.filterData(data.data.data));
+          }
+        },
+        complete: () => {
+          this.loading = false;
+        },
       });
     },
+    filterData(commentList) {
+      return commentList.map(comment => getCommentInfo(comment));
+    },
+  },
+  onShow() {
+    this.page = 1;
+    this.refreshComment();
+  },
+  onReachBottom() {
+    this.page += 1;
+    this.loading = true;
+    this.refreshComment();
   },
 };
 </script>
 
-<style>
-.card {
-  padding: 10px;
-  border-top: 1px #ccc solid;
-  border-bottom: 1px #ccc solid;
+<style scoped>
+.detial {
+  background-color: #eee;
 }
-.label {
+.comment-list {
   display: flex;
-}
-.avater image {
-  width: 40px;
-  height: 40px;
-  border-radius: 20px;
-}
-.title {
-  margin-left: 10px;
-  display: flex;
+  margin-top: 10px;
   flex-direction: column;
-  justify-content: space-around;
-  font-size: 15px;
+  background-color: #fff;
 }
-.title .desc {
-  font-size: 12px;
-  color: #999;
-}
-.content {
-  margin: 5px 0;
-  font-size: 16px;
-  line-height: 25px;
-}
-.preview {
-  display: flex;
-  flex-wrap: wrap;
-}
-.pic {
-  margin: 2px;
-  width: 110px;
-  height: 110px;
-}
-.video {
-  height: 170px;
-  width: 300px;
-}
+
 </style>

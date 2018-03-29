@@ -84,7 +84,33 @@ export function getWeiboInfo(weibo) {
   };
 }
 
+/**
+ * 过滤评论数据
+ *
+ * @export
+ * @param {any} comment
+ * @returns
+ */
+export function getCommentInfo(comment) {
+  // 时间和来源
+  const createdAt = comment.created_at || '宇宙大爆炸前';
+  const source = comment.source || '火星';
+  const text = comment.text || '这里一片荒芜...';
+
+  return {
+    id: comment.id,
+    user: {
+      profile_image_url: comment.user.profile_image_url,
+      screen_name: comment.user.screen_name,
+    },
+    created_at: createdAt,
+    source,
+    text: getTextFilter(text),
+  };
+}
+
 export default {
   getWeiboInfo,
+  getCommentInfo,
   getCookieFilter,
 };
