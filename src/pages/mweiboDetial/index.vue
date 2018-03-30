@@ -82,7 +82,10 @@ export default {
     this.noMore = false;
     this.hotList = [];
     this.commentList = [];
-    this.refreshComment();
+    if (this.id !== this.weibo.id) {
+      this.id = this.weibo.id;
+      this.refreshComment();
+    }
   },
   onReachBottom() {
     this.page += 1;

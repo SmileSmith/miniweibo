@@ -39,6 +39,7 @@ export default {
     };
   },
   onReachBottom() {
+    if (this.loading) return;
     this.loading = true;
     this.refreshWeiboList({
       complete: () => {
@@ -59,6 +60,7 @@ export default {
   methods: {
     topRefresh() {
       wx.pageScrollTo({ scrollTop: 0, duration: 300 });
+      if (this.topLoading) return;
       this.topLoading = true;
       this.refreshWeiboList({
         top: true,
@@ -87,7 +89,6 @@ export default {
           } else {
             this.weiboList = this.weiboList.concat(weiboList);
           }
-          wx.vibrateShort();
           store.commit('setMWeiboList', this.weiboList);
           this.page += 1;
           this.setCache(weiboList);
