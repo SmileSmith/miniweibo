@@ -10,12 +10,13 @@
         <text>来自 {{source}}</text>
       </p>
     </div>
+    <div v-if="likes" class="like"><text class="iconfont icon-dianzan"></text> {{likes}} </div>
   </div>
 </template>
 
 <script>
 export default {
-  props: ['user', 'created', 'source'],
+  props: ['user', 'created', 'source', 'likes'],
 };
 </script>
 
@@ -30,6 +31,7 @@ export default {
 }
 .title {
   margin-left: 10px;
+  flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
@@ -38,5 +40,10 @@ export default {
 .title .desc {
   font-size: 12px;
   color: #999;
+}
+.like {
+  font-size: 12px;
+  color: #999;
+  margin-right: 10px;
 }
 </style>

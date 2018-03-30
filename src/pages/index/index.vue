@@ -9,12 +9,8 @@
     </div>
 
     <div class="usermotto">
-      <div class="user-motto">
-        <card v-if="userInfo.nickName" text="微信用户登录成功"></card>
-      </div>
-      <div class="user-motto">
-        <card v-if="weiboInfo" text="微博账号认证成功"></card>
-      </div>
+      <card v-if="userInfo.nickName" text="微信用户登录成功"></card>
+      <card v-if="weiboInfo" text="微博账号认证成功"></card>
     </div>
 
     <a href="/pages/weibo/main" class="weibo">即将打开世界的大门...</a>
@@ -110,12 +106,6 @@ export default {
 
 .userinfo-nickname {
   color: #aaa;
-}
-
-.usermotto {
-  margin-top: 120px;
-  font-size: 15px;
-  color: #ccc;
 }
 
 .form-control {

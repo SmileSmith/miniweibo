@@ -29,7 +29,7 @@ export default {
 .csshub-loading > div {
   background-color: #999;
   width: 4px;
-  height: 20px;
+  height: 22px;
   border-radius: 2px;
   margin: 8px;
   animation-fill-mode: both;

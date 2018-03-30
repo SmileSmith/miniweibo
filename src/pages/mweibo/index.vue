@@ -137,9 +137,9 @@ export default {
     },
   },
   mounted() {
+    this.weiboIdSet = [];
     if (this.cached) return;
     this.refreshWeiboList();
-    this.weiboIdSet = [];
   },
   created() {
     try {

@@ -1,8 +1,6 @@
 <template>
-  <div>
-    <p class="card">
+  <div class="card">
       {{text}}
-    </p>
   </div>
 </template>
 
@@ -12,8 +10,12 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .card {
   padding: 10px;
+  height: 20px;
+  font-size: 15px;
+  color: #ccc;
+  text-align: center;
 }
 </style>

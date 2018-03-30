@@ -105,6 +105,7 @@ export function getCommentInfo(comment) {
     },
     created_at: createdAt,
     source,
+    likes: comment.like_counts,
     text: getTextFilter(text),
   };
 }

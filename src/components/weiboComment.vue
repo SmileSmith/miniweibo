@@ -1,6 +1,6 @@
 <template>
   <div class="comment">
-    <weiboUser :user="comment.user" :created="comment.created_at" :source="comment.source"></weiboUser>
+    <weiboUser :user="comment.user" :created="comment.created_at" :source="comment.source" :likes="comment.likes"></weiboUser>
     <div class="comment-content">
       <richContent :content="comment.text"></richContent>
     </div>

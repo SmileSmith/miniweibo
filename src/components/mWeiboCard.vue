@@ -4,12 +4,12 @@
     <div class="content">
       <richContent :content="weibo.text"></richContent>
     </div>
-    <div class="preview" @click.stop="doNothing">
+    <div class="preview">
       <image v-if="weibo.pics.smalls.length > 0" class="pic"
         v-for="(url, index) in weibo.pics.smalls"
         :key="index" :src="url" :lazy-load="true" mode="aspectFill"
         @click.stop="previewImage(index)" />
-      <div class="video-wrapper" v-if="weibo.video" @click="previewVideo">
+      <div class="video-wrapper" v-if="weibo.video" @click.stop="previewVideo">
         <image class="video" v-if="!videoSrc" :src="weibo.video.pic" :lazy-load="true" mode="aspectFill" />
         <div class="video-button" v-if="!videoSrc"></div>
         <video class="video" v-if="videoSrc" @click.stop="doNothing" :id="'video_' + weibo.id" :src="videoSrc" controls></video>
