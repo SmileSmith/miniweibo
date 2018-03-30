@@ -33,7 +33,7 @@ export default {
     return {
       weiboList: [],
       cached: false,
-      sinceId: 1,
+      page: 1,
       loading: false,
       topLoading: false,
     };
@@ -70,16 +70,15 @@ export default {
     refreshWeiboList(config = {}) {
       const { top, success, fail, complete } = config;
       wx.request({
-        url: 'https://m.weibo.cn/api/container/getIndex?containerid=102803',
+        url: 'https://m.weibo.cn/api/container/getIndex?containerid=102803_ctg1_8999_-_ctg1_8999_home',
         method: 'GET',
         header: {
           Cookie: wx.getStorageSync('cookie'),
         },
         data: {
-          since_id: this.sinceId,
+          page: this.page,
         },
         success: ({ data, header }) => {
-          wx.vibrateShort();
           if (!data.ok) return;
           if (success) success();
           const weiboList = this.filterData(data.data.cards);
@@ -88,8 +87,9 @@ export default {
           } else {
             this.weiboList = this.weiboList.concat(weiboList);
           }
+          wx.vibrateShort();
           store.commit('setMWeiboList', this.weiboList);
-          this.sinceId += 1;
+          this.page += 1;
           this.setCache(weiboList);
           this.setCookie(header['Set-Cookie']);
         },
@@ -107,7 +107,14 @@ export default {
       });
     },
     filterData(cardList) {
-      return cardList.map(card => getWeiboInfo(card.mblog));
+      const list = [];
+      cardList.forEach((card) => {
+        if (card.card_type === 9 && this.weiboIdSet.indexOf(card.mblog.id) === -1) {
+          list.push(getWeiboInfo(card.mblog));
+          this.weiboIdSet.push(card.mblog.id);
+        }
+      });
+      return list;
     },
     setCache(weiboList) {
       const lastUpdateTime = new Date().getTime();
@@ -118,7 +125,10 @@ export default {
     },
     setCookie(cookie) {
       if (!cookie) return;
-      wx.setStorageSync('cookie', getCookieFilter(cookie));
+      wx.setStorage({
+        key: 'cookie',
+        data: getCookieFilter(cookie),
+      });
     },
     goDetial(id) {
       store.commit('setMWeiboId', id);
@@ -129,6 +139,7 @@ export default {
   mounted() {
     if (this.cached) return;
     this.refreshWeiboList();
+    this.weiboIdSet = [];
   },
   created() {
     try {

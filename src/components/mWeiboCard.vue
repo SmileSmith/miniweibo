@@ -9,7 +9,11 @@
         v-for="(url, index) in weibo.pics.smalls"
         :key="index" :src="url" :lazy-load="true" mode="aspectFill"
         @click.stop="previewImage(index)" />
-      <video v-if="weibo.video" :src="weibo.video.url" :poster="weibo.video.pic" controls></video>
+      <div class="video-wrapper" v-if="weibo.video" @click="previewVideo">
+        <image class="video" v-if="!videoSrc" :src="weibo.video.pic" :lazy-load="true" mode="aspectFill" />
+        <div class="video-button" v-if="!videoSrc"></div>
+        <video class="video" v-if="videoSrc" @click.stop="doNothing" :id="'video_' + weibo.id" :src="videoSrc" controls></video>
+      </div>
     </div>
   </div>
 </template>
@@ -24,7 +28,25 @@ export default {
     weiboUser,
   },
   props: ['weibo'],
+  data() {
+    return {
+      showVideo: false,
+    };
+  },
+  computed: {
+    videoSrc() {
+      if (this.showVideo) {
+        return this.weibo.video.url;
+      }
+      return '';
+    },
+  },
   methods: {
+    previewVideo() {
+      this.showVideo = true;
+      this.videoContext = wx.createVideoContext(`video_${this.weibo.id}`);
+      this.videoContext.play();
+    },
     previewImage(index) {
       wx.previewImage({
         current: this.weibo.pics.larges[index], // 当前显示图片的http链接
@@ -60,8 +82,26 @@ export default {
   width: 110px;
   height: 110px;
 }
-.video {
+.video-wrapper {
   height: 170px;
   width: 300px;
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #666;
+}
+.video-button {
+  position: absolute;
+  height: 0px;
+  width: 0px;
+  margin-bottom: 15px;
+  border-top: 16px solid transparent;
+  border-left: 25px solid #eee;
+  border-bottom: 16px solid transparent;
+  border-radius: 3px;
+}
+.video {
+  width: 100%;
+  height: 100%;
 }
 </style>

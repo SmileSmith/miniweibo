@@ -3,7 +3,7 @@
     <mWeiboCard :weibo="weibo"></mWeiboCard>
     <weiboBar :bar="weibo.bar"></weiboBar>
     <ul class="comment-list">
-        <weiboComment v-if="commentList.length > 0" class="comment-item" v-for="(comment, index) in commentList" :key="index" :comment="comment"></weiboComment>
+        <weiboComment v-if="commentList.length > 0" v-for="(comment, index) in commentList" :key="index" :comment="comment"></weiboComment>
     </ul>
     <loadingBar v-show="loading"></loadingBar>
   </div>
