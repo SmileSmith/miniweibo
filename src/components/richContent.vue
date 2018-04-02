@@ -63,6 +63,7 @@ export default {
 <style scoped>
 .rich-itemt {
   display: inline;
+  word-wrap: break-word;
 }
 .rich-emotion {
   display: inline-block;
