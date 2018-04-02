@@ -10,7 +10,7 @@
         :key="index" :src="url" :lazy-load="true" mode="aspectFill"
         @click.stop="previewImage(index)" />
       <div class="video-wrapper" v-if="weibo.video" @click.stop="previewVideo">
-        <image class="video" v-if="!videoSrc" :src="weibo.video.pic" :lazy-load="true" mode="aspectFill" />
+        <image class="video" v-if="!videoSrc" :src="weibo.video.pic" lazy-load="true" mode="aspectFill" />
         <div class="video-button" v-if="!videoSrc"></div>
         <video class="video" v-if="videoSrc" @click.stop="doNothing" :id="'video_' + weibo.id" :src="videoSrc" controls></video>
       </div>

@@ -20,7 +20,8 @@ import loadingButton from '@/components/loadingButton';
 import loadingBar from '@/components/loadingBar';
 
 import store from '@/store';
-import { getCookieFilter, getWeiboInfo } from '@/utils/mweibo';
+import { getWeiboInfo } from '@/utils/mweibo';
+import mv from '@/utils/mv';
 
 export default {
   components: {
@@ -38,73 +39,42 @@ export default {
       topLoading: false,
     };
   },
-  onReachBottom() {
+  async onReachBottom() {
     if (this.loading) return;
     this.loading = true;
-    this.refreshWeiboList({
-      complete: () => {
-        this.loading = false;
-      },
-    });
+    await this.refreshWeiboList();
+    this.loading = false;
   },
-  onPullDownRefresh() {
+  async onPullDownRefresh() {
     wx.showNavigationBarLoading();
-    this.refreshWeiboList({
-      top: true,
-      complete: () => {
-        wx.stopPullDownRefresh();
-        wx.hideNavigationBarLoading();
-      },
-    });
+    await this.refreshWeiboList({ top: true });
+    wx.stopPullDownRefresh();
+    wx.hideNavigationBarLoading();
   },
   methods: {
-    topRefresh() {
+    async topRefresh() {
       wx.pageScrollTo({ scrollTop: 0, duration: 300 });
       if (this.topLoading) return;
       this.topLoading = true;
-      this.refreshWeiboList({
-        top: true,
-        complete: () => {
-          this.topLoading = false;
-        },
-      });
+      await this.refreshWeiboList({ top: true });
+      this.topLoading = false;
     },
-    refreshWeiboList(config = {}) {
-      const { top, success, fail, complete } = config;
-      wx.request({
+    async refreshWeiboList(config = {}) {
+      const { top } = config;
+      await mv.request({
         url: 'https://m.weibo.cn/api/container/getIndex?containerid=102803_ctg1_8999_-_ctg1_8999_home',
         method: 'GET',
-        header: {
-          Cookie: wx.getStorageSync('cookie'),
-        },
-        data: {
-          page: this.page,
-        },
-        success: ({ data, header }) => {
-          if (!data.ok) return;
-          if (success) success();
-          const weiboList = this.filterData(data.data.cards);
-          if (top) {
-            this.weiboList = weiboList;
-          } else {
-            this.weiboList = this.weiboList.concat(weiboList);
-          }
-          store.commit('setMWeiboList', this.weiboList);
-          this.page += 1;
-          this.setCache(weiboList);
-          this.setCookie(header['Set-Cookie']);
-        },
-        fail: (err) => {
-          if (fail) {
-            fail();
-          }
-          console.log(err);
-        },
-        complete: () => {
-          if (complete) {
-            complete();
-          }
-        },
+        data: { page: this.page },
+      }).then(({ data }) => {
+        if (!data.ok) return;
+        this.page += 1;
+        const weiboList = this.filterData(data.data.cards);
+        this.setCache(weiboList);
+        this.weiboList = top ? weiboList : this.weiboList.concat(weiboList);
+        store.commit('setMWeiboList', this.weiboList);
+      }).catch((err) => {
+        mv.showToast({ title: '请求数据失败', duration: 500, mask: true });
+        console.log(err);
       });
     },
     filterData(cardList) {
@@ -122,13 +92,6 @@ export default {
       wx.setStorage({
         key: 'hot_cache',
         data: { lastUpdateTime, weiboList },
-      });
-    },
-    setCookie(cookie) {
-      if (!cookie) return;
-      wx.setStorage({
-        key: 'cookie',
-        data: getCookieFilter(cookie),
       });
     },
     goDetial(id) {
